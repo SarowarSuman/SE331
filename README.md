@@ -1,18 +1,3 @@
-<div align="center">
-
-```
-  ██████╗ ██╗   ██╗██████╗     ██████╗ ██╗      ██╗██╗  ██╗██╗██╗   ██╗██╗
-  ██╔══██╗██║   ██║██╔══██╗   ██╔════╝ ██║      ██║██║  ██║██║██║   ██║██║
-  ██║  ██║██║   ██║██║  ██║   ██║      ██║      ██║███████║██║██║   ██║██║
-  ██║  ██║╚██╗ ██╔╝██║  ██║   ██║      ██║      ██║██╔══██║██║╚██╗ ██╔╝██║
-  ██████╔╝ ╚████╔╝ ██████╔╝   ╚██████╗ ███████╗██║██║  ██║██║ ╚████╔╝ ███████╗
-  ╚═════╝   ╚═══╝  ╚═════╝     ╚═════╝ ╚══════╝╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝  ╚══════╝
-```
-
-</div>
-
-<div align="center">
-
 # 🍔 Campus Food Pre-Order System
 
 <p><em>Tired of standing in the canteen queue for 30 minutes just to get a plate of rice?<br>Yeah... me too. So I built this.</em></p>
@@ -150,37 +135,6 @@ Three models. Simple. Clean. Powerful.
 | **SQLite** | No need to set up a separate database server. It just works |
 | **Bootstrap 5** | Responsive, good-looking UI without writing CSS from scratch |
 | **Vanilla JS** | Kept it simple — just for the real-time price calculation on the order page |
-
----
-
-## 📂 Project Layout
-
-```
-food_preorder/
-│
-├── food_preorder/              ← Django project settings & config
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-│
-├── canteen/                    ← The main app — all the logic lives here
-│   ├── models.py               ← FoodItem, Order, OrderItem
-│   ├── views.py                ← What happens when you visit each page
-│   ├── admin.py                ← How the admin panel looks & works
-│   ├── urls.py                 ← Which URL goes to which page
-│   │
-│   └── templates/canteen/      ← The HTML pages
-│       ├── base.html           ← Shared layout (navbar, footer)
-│       ├── home.html           ← Menu browsing
-│       ├── place_order.html    ← Order form
-│       ├── order_success.html  ← Confirmation
-│       ├── track_order.html    ← Order tracking
-│       └── order_history.html  ← Past orders
-│
-├── media/                      ← Food images uploaded via admin
-├── manage.py                   ← Django's command-line tool
-└── db.sqlite3                  ← The database (auto-created)
-```
 
 ---
 
