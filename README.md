@@ -134,7 +134,6 @@ Three models. Simple. Clean. Powerful.
 | **Django** | Gave me a built-in admin panel, ORM, and auth for free — saved days of work |
 | **SQLite** | No need to set up a separate database server. It just works |
 | **Bootstrap 5** | Responsive, good-looking UI without writing CSS from scratch |
-| **Vanilla JS** | Kept it simple — just for the real-time price calculation on the order page |
 
 ---
 
