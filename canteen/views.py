@@ -1,81 +1,88 @@
-"""
-View Functions
-Module 1: Display and filter food items
-"""
-from django.shortcuts import render, get_object_or_404
-from .models import FoodItem, Category
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.db import transaction
+from .models import FoodItem, Order, OrderItem
+import datetime
 
-
+# ==========================================
+# MODULE 1: VIEWS (আগের কোড)
+# ==========================================
 def home(request):
-    """
-    Homepage with food items and category filtering
-    Suman: FR-1 - Display items
-    Emamul: FR-2 - Category filtering
-    Arin: FR-3 - Availability status
-    """
-    # Emamul's Part - Get selected category from URL
-    selected_category = request.GET.get('category', 'all')
-    
-    # Get all categories for filter buttons
-    categories = Category.objects.all()
-    
-    # Filter food items
-    if selected_category == 'all':
-        food_items = FoodItem.objects.filter(is_available=True)
-    else:
-        food_items = FoodItem.objects.filter(
-            category__name=selected_category,
-            is_available=True
-        )
-    
-    context = {
-        'food_items': food_items,
-        'categories': categories,
-        'selected_category': selected_category,
-    }
-    
-    return render(request, 'canteen/home.html', context)
-
+    # হোম পেইজে দেখানোর জন্য ৩টি এভেইলেবল আইটেম
+    featured_items = FoodItem.objects.filter(is_available=True)[:3]
+    return render(request, 'canteen/home.html', {'featured_items': featured_items})
 
 def menu_view(request):
-    """
-    Full menu page with items grouped by category
-    Emamul's Part - Category organization
-    """
-    categories = Category.objects.all()
-    menu_data = []
-    
-    for category in categories:
-        items = FoodItem.objects.filter(category=category, is_available=True)
-        if items.exists():
-            menu_data.append({
-                'category': category,
-                'items': items
-            })
-    
-    context = {
-        'menu_data': menu_data,
-    }
-    
-    return render(request, 'canteen/menu.html', context)
-
+    # মেনু পেইজের জন্য সব এভেইলেবল আইটেম
+    food_items = FoodItem.objects.filter(is_available=True)
+    return render(request, 'canteen/menu.html', {'food_items': food_items})
 
 def food_item_detail(request, item_id):
-    """
-    Detailed view of a single food item
-    All team members' features combined
-    """
-    food_item = get_object_or_404(FoodItem, id=item_id)
+    # ফুড ডিটেইলস পেইজ
+    item = get_object_or_404(FoodItem, id=item_id)
+    return render(request, 'canteen/food_detail.html', {'item': item})
+
+
+# ==========================================
+# MODULE 2: VIEWS (নতুন কোড)
+# ==========================================
+def place_order(request):
+    food_items = FoodItem.objects.filter(is_available=True)
     
-    # Get related items from same category
-    related_items = FoodItem.objects.filter(
-        category=food_item.category,
-        is_available=True
-    ).exclude(id=item_id)[:4]
-    
-    context = {
-        'food_item': food_item,
-        'related_items': related_items,
-    }
-    
-    return render(request, 'canteen/food_detail.html', context)
+    if request.method == 'POST':
+        student_name = request.POST.get('student_name')
+        student_id = request.POST.get('student_id')
+        phone = request.POST.get('phone')
+        
+        # জেনারেট Order ID (e.g., ORD-20231025123045)
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        order_id = f"ORD-{timestamp}"
+        
+        try:
+            with transaction.atomic():
+                # নতুন অর্ডার তৈরি
+                order = Order.objects.create(
+                    order_id=order_id,
+                    student_name=student_name,
+                    student_id=student_id,
+                    phone=phone
+                )
+                
+                total_amount = 0
+                
+                # নির্বাচিত আইটেমগুলো চেক করা
+                for item in food_items:
+                    checkbox_name = f"item_{item.id}"
+                    if request.POST.get(checkbox_name):
+                        qty = int(request.POST.get(f"qty_{item.id}", 1))
+                        price = item.price * qty
+                        total_amount += price
+                        
+                        # অর্ডার আইটেম সেভ করা
+                        OrderItem.objects.create(
+                            order=order,
+                            food_item=item,
+                            quantity=qty,
+                            price=item.price
+                        )
+                
+                # যদি কোনো আইটেম সিলেক্ট না করে
+                if total_amount == 0:
+                    messages.error(request, "Please select at least one item!")
+                    return redirect('canteen:place_order')
+                    
+                # টোটাল এমাউন্ট আপডেট করা
+                order.total_amount = total_amount
+                order.save()
+                
+                return redirect('canteen:order_success', order_id=order.order_id)
+                
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+            return redirect('canteen:place_order')
+            
+    return render(request, 'canteen/place_order.html', {'food_items': food_items})
+
+def order_success(request, order_id):
+    order = get_object_or_404(Order, order_id=order_id)
+    return render(request, 'canteen/order_success.html', {'order': order})

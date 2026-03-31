@@ -66,11 +66,14 @@ WSGI_APPLICATION = 'food_preorder.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql', # এখানে sqlite থাকলে সেটি বদলে mysql করতে হয়
+        'NAME': 'campus_food_db',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -117,3 +120,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+import django
+from django.db.backends.mysql.base import DatabaseWrapper
+
+# জ্যাঙ্গোকে জানানো যে সে MariaDB ব্যবহার করছে
+DatabaseWrapper.display_name = 'MariaDB'
+
+# RETURNING সিনট্যাক্স সাপোর্ট বন্ধ করা
+from django.db.backends.mysql.features import DatabaseFeatures
+DatabaseFeatures.can_return_rows_from_bulk_insert = False
+DatabaseFeatures.has_select_for_update_skip_locked = False

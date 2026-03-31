@@ -7,30 +7,163 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #f8f9fa; }
-        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .food-card { transition: transform 0.3s; border-radius: 12px; }
-        .food-card:hover { transform: translateY(-5px); }
-        .price-tag { font-size: 1.4rem; font-weight: bold; color: #28a745; }
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .food-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .food-image {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        
+        .price-tag {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .category-badge {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+        }
+        
+        .availability-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+        
+        .filter-btn {
+            margin: 0.3rem;
+            border-radius: 25px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .placeholder-image {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            margin-top: 4rem;
+        }
     </style>
+    
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{% url 'canteen:home' %}">
                 <i class="fas fa-utensils me-2"></i>Campus Canteen
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="{% url 'canteen:home' %}">Home</a>
-                <a class="nav-link" href="{% url 'canteen:menu' %}">Menu</a>
-                <a class="nav-link" href="/admin/">Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'canteen:home' %}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'canteen:menu' %}">
+                            <i class="fas fa-book-open me-1"></i>Full Menu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'canteen:place_order' %}">
+                            <i class="fas fa-shopping-cart me-1"></i>Place Order
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/">
+                            <i class="fas fa-cog me-1"></i>Admin
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
-    <main>{% block content %}{% endblock %}</main>
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p class="mb-0">&copy; 2026 Campus Food Pre-Order System</p>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 Campus Food Pre-Order System | Module 1 & 2</p>
+            <small class="text-muted">
+                Team: Suman (Backend) | Emamul (Frontend) | Arin (Order Management)
+            </small>
+        </div>
     </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

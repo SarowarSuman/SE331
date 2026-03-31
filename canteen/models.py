@@ -1,81 +1,46 @@
-"""
-Database Models for Campus Food Pre-Order System
-Module 1: Food Menu Browsing and Categorization
-"""
 from django.db import models
-from django.utils import timezone
 
-
-class Category(models.Model):
-    """
-    Category model for organizing food items
-    FR-2: Categories (Breakfast, Lunch, Snacks, Drinks)
-    Emamul's Feature
-    """
-    CATEGORY_CHOICES = [
-        ('breakfast', 'Breakfast'),
-        ('lunch', 'Lunch'),
-        ('snacks', 'Snacks'),
-        ('drinks', 'Drinks'),
-    ]
-    
-    name = models.CharField(max_length=50, choices=CATEGORY_CHOICES, unique=True)
-    description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        verbose_name_plural = "Categories"
-        ordering = ['name']
-    
-    def __str__(self):
-        return self.get_name_display()
-
-
+# ==========================================
+# MODULE 1: Food Item Model (আগের কোড)
+# ==========================================
 class FoodItem(models.Model):
-    """
-    Food Item model storing menu items
-    Suman's Features: FR-1 (Display items), FR-6 (Image handling)
-    Arin's Feature: FR-3 (Availability status)
-    """
-    category = models.ForeignKey(
-        Category, 
-        on_delete=models.CASCADE, 
-        related_name='food_items'
-    )
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    description = models.TextField(blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='food_images/', blank=True, null=True)
-    
-    # Arin's Part - FR-3: Availability tracking
     is_available = models.BooleanField(default=True)
-    
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        ordering = ['category', 'name']
-    
+
     def __str__(self):
-        return f"{self.name} - ৳{self.price}"
-    
-    def get_image_url(self):
-        """
-        Suman's Part - FR-6: Return image URL or placeholder
-        """
-        if self.image:
-            return self.image.url
-        else:
-            return '/static/images/placeholder-food.png'
-    
-    def get_availability_status(self):
-        """
-        Arin's Part - FR-3: Get availability status display
-        """
-        return "Available" if self.is_available else "Sold Out"
-    
-    def get_availability_class(self):
-        """
-        CSS class for availability badge
-        """
-        return "bg-success" if self.is_available else "bg-danger"
+        return self.name
+
+
+# ==========================================
+# MODULE 2: Order Models (নতুন কোড)
+# ==========================================
+class Order(models.Model):
+    order_id = models.CharField(max_length=50, unique=True, blank=True)
+    student_name = models.CharField(max_length=100)
+    student_id = models.CharField(max_length=20)
+    phone = models.CharField(max_length=15)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    status_choices = (
+        ('Pending', 'Pending'),
+        ('Preparing', 'Preparing'),
+        ('Ready', 'Ready'),
+        ('Completed', 'Completed'),
+    )
+    status = models.CharField(max_length=20, choices=status_choices, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.order_id} - {self.student_name}"
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    food_item = models.ForeignKey(FoodItem, on_delete=models.CASCADE) 
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.quantity}x {self.food_item.name} for {self.order.order_id}"

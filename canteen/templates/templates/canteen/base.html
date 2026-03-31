@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Campus Food Pre-Order{% endblock %}</title>
     
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -40,58 +38,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
         
-        .food-image {
-            height: 200px;
-            object-fit: cover;
-            width: 100%;
-        }
-        
-        .price-tag {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-        
-        .category-badge {
-            font-size: 0.85rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-        }
-        
-        .availability-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 10;
-            font-weight: bold;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-        }
-        
-        .filter-btn {
-            margin: 0.3rem;
-            border-radius: 25px;
-            padding: 0.6rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        
-        .filter-btn.active {
-            background: var(--primary-color);
-            color: white;
-            transform: scale(1.05);
-        }
-        
-        .placeholder-image {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 200px;
-            color: white;
-            font-size: 3rem;
-        }
-        
         footer {
             background: #2c3e50;
             color: white;
@@ -102,10 +48,9 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'canteen:home' %}">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
                 <i class="fas fa-utensils me-2"></i>Campus Canteen
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -113,27 +58,42 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'canteen:home' %}">
+                        <a class="nav-link" href="{% url 'home' %}">
                             <i class="fas fa-home me-1"></i>Home
                         </a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'canteen:menu' %}">
+                        <a class="nav-link" href="{% url 'menu' %}">
                             <i class="fas fa-book-open me-1"></i>Full Menu
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_cart' %}">
+                            <i class="fas fa-shopping-cart me-1"></i>Cart
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'place_order' %}">
+                            <i class="fas fa-bell me-1"></i>Place Order
+                        </a>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/">
                             <i class="fas fa-cog me-1"></i>Admin
                         </a>
                     </li>
+
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Messages -->
     {% if messages %}
         <div class="container mt-3">
             {% for message in messages %}
@@ -145,23 +105,20 @@
         </div>
     {% endif %}
 
-    <!-- Main Content -->
     <main>
         {% block content %}
         {% endblock %}
     </main>
 
-    <!-- Footer -->
     <footer class="py-4">
         <div class="container text-center">
-            <p class="mb-0">&copy; 2026 Campus Food Pre-Order System | Module 1</p>
+            <p class="mb-0">&copy; 2026 Campus Food Pre-Order System | Module 2</p>
             <small class="text-muted">
                 Team: Suman (Backend) | Emamul (Frontend) | Arin (Order Management)
             </small>
         </div>
     </footer>
 
-    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     {% block extra_js %}{% endblock %}

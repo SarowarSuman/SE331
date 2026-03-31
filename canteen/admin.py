@@ -1,53 +1,25 @@
-"""
-Admin Panel Configuration
-Module 1: Food Menu Management
-"""
 from django.contrib import admin
-from .models import Category, FoodItem
+from .models import FoodItem, Order, OrderItem
 
-
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    """
-    Category Admin Panel
-    """
-    list_display = ['name', 'description', 'created_at']
-    search_fields = ['name']
-    readonly_fields = ['created_at']
-
-
+# ==========================================
+# MODULE 1: Food Item Admin (আগের কোড)
+# ==========================================
 @admin.register(FoodItem)
 class FoodItemAdmin(admin.ModelAdmin):
-    """
-    Food Item Admin Panel
-    Suman: Image management
-    Arin: Availability quick-edit
-    """
-    list_display = ['name', 'category', 'price', 'is_available', 'created_at']
-    list_filter = ['category', 'is_available', 'created_at']
-    search_fields = ['name', 'description']
-    list_editable = ['is_available', 'price']
-    readonly_fields = ['created_at', 'updated_at']
-    
-    fieldsets = (
-        ('Basic Information', {
-            'fields': ('category', 'name', 'description')
-        }),
-        ('Pricing & Availability', {
-            'fields': ('price', 'is_available')
-        }),
-        ('Image', {
-            'fields': ('image',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    list_display = ('name', 'price', 'is_available', 'created_at')
+    list_filter = ('is_available',)
+    search_fields = ('name',)
 
-# Customize Admin Site
-from django.contrib import admin
+# ==========================================
+# MODULE 2: Order Admin (নতুন কোড)
+# ==========================================
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
 
-admin.site.site_header = "Administration"
-admin.site.site_title = "Campus Canteen Admin"
-admin.site.index_title = "Welcome to Campus Food Pre-Order System"    
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('order_id', 'student_name', 'student_id', 'total_amount', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('order_id', 'student_name', 'student_id')
+    inlines = [OrderItemInline]
