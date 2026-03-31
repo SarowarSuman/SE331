@@ -1,0 +1,132 @@
+{% extends 'canteen/base.html' %}
+
+{% block title %}{{ food_item.name }} - Campus Canteen{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{% url 'canteen:home' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Menu
+        </a>
+    </div>
+
+    <!-- Food Item Detail -->
+    <div class="row">
+        <!-- Image Column -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-lg">
+                {% if food_item.image %}
+                    <img src="{{ food_item.image.url }}" class="card-img-top" alt="{{ food_item.name }}" style="max-height: 500px; object-fit: cover;">
+                {% else %}
+                    <div class="placeholder-image" style="height: 500px;">
+                        <i class="fas fa-utensils fa-5x"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Details Column -->
+        <div class="col-md-6">
+            <div class="mb-4">
+                <!-- Availability Badge -->
+                <span class="badge {{ food_item.get_availability_class }} mb-3" style="font-size: 1rem; padding: 0.7rem 1.5rem;">
+                    {{ food_item.get_availability_status }}
+                </span>
+                
+                <!-- Name -->
+                <h1 class="display-5 fw-bold mb-3">{{ food_item.name }}</h1>
+                
+                <!-- Category -->
+                <div class="mb-3">
+                    <span class="badge bg-info text-dark" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <i class="fas fa-tag me-2"></i>{{ food_item.category.get_name_display }}
+                    </span>
+                </div>
+                
+                <!-- Price -->
+                <div class="mb-4">
+                    <h2 class="text-success fw-bold">৳{{ food_item.price }}</h2>
+                </div>
+                
+                <!-- Description -->
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3">Description</h5>
+                    <p class="text-muted" style="font-size: 1.1rem; line-height: 1.8;">
+                        {{ food_item.description|default:"This is a delicious food item from our canteen. Freshly prepared with quality ingredients." }}
+                    </p>
+                </div>
+                
+                <!-- Additional Info -->
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">Additional Information</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Fresh and hygienic preparation
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-clock text-primary me-2"></i>
+                                Pre-order available
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-money-bill-wave text-warning me-2"></i>
+                                Cash payment at pickup
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Action Button -->
+                {% if food_item.is_available %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Order placement feature coming in Module 2
+                    </div>
+                {% else %}
+                    <button class="btn btn-secondary btn-lg w-100" disabled>
+                        <i class="fas fa-ban me-2"></i>Currently Unavailable
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Items Section -->
+    {% if related_items %}
+        <div class="mt-5 pt-5">
+            <h3 class="fw-bold mb-4">You May Also Like</h3>
+            <div class="row g-4">
+                {% for item in related_items %}
+                    <div class="col-md-3">
+                        <div class="card food-card shadow-sm h-100">
+                            <span class="badge availability-badge {{ item.get_availability_class }}">
+                                {{ item.get_availability_status }}
+                            </span>
+                            
+                            {% if item.image %}
+                                <img src="{{ item.image.url }}" class="food-image" alt="{{ item.name }}">
+                            {% else %}
+                                <div class="placeholder-image">
+                                    <i class="fas fa-utensils"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="card-body">
+                                <h6 class="card-title fw-bold">{{ item.name }}</h6>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="fw-bold text-success">৳{{ item.price }}</span>
+                                    <a href="{% url 'canteen:food_detail' item.id %}" class="btn btn-sm btn-outline-primary">
+                                        View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

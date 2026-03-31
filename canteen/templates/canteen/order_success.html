@@ -1,0 +1,35 @@
+{% extends 'canteen/base.html' %}
+
+{% block title %}Order Confirmed - Campus Canteen{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5 text-center">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    <h1 class="h3 fw-bold mt-3">Pre-Order Placed Successfully</h1>
+                    <p class="text-muted mb-4">Your request has been received by the canteen.</p>
+
+                    <div class="bg-light rounded p-3 text-start">
+                        <p class="mb-2"><strong>Order ID:</strong> #{{ order.id }}</p>
+                        <p class="mb-2"><strong>Item:</strong> {{ order.food_item.name }}</p>
+                        <p class="mb-2"><strong>Quantity:</strong> {{ order.quantity }}</p>
+                        <p class="mb-2"><strong>Subtotal:</strong> ৳{{ order.subtotal }}</p>
+                        <p class="mb-2"><strong>Student Name:</strong> {{ order.student_name }}</p>
+                        <p class="mb-2"><strong>Student ID:</strong> {{ order.student_id }}</p>
+                        <p class="mb-0"><strong>Phone Number:</strong> {{ order.phone_number }}</p>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-2 justify-content-center">
+                        <a href="{% url 'canteen:home' %}" class="btn btn-primary">Browse More Items</a>
+                        <a href="{% url 'canteen:food_detail' order.food_item.id %}" class="btn btn-outline-secondary">Back to Item</a>
+                        <a href="{% url 'canteen:track_order' %}?track-order=1&track-order_id={{ order.id }}" class="btn btn-outline-success">Track This Order</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
